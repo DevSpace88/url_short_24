@@ -1,0 +1,14 @@
+/static/
+*static/
+/docker_backup/
+
+*.env
+.env
+*.pyc
+/__pycache__/
+*__pycache__/
+
+*change_static.py
+
+
+

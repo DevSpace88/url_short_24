@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>URL Shortener</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+        
+    <!-- favicon -->
+    <link rel="shortcut icon" href="{{ config['S3_BUCKET_URL'] }}{{ url_for('static', filename='assets/images/favicon.ico') }}">
+
+    <link rel="stylesheet" href="{{ config['S3_BUCKET_URL'] }}{{ url_for('static', filename='assets/libs/tiny-slider/tiny-slider.css') }}">
+    <link rel="stylesheet" href="{{ config['S3_BUCKET_URL'] }}{{ url_for('static', filename='assets/css/bootstrap.min.css') }}" id="bootstrap-style" class="theme-opt" type="text/css">
+    <link rel="stylesheet" href="{{ config['S3_BUCKET_URL'] }}{{ url_for('static', filename='assets/libs/@mdi/font/css/materialdesignicons.min.css') }}" type="text/css">
+    <link rel="stylesheet" href="{{ config['S3_BUCKET_URL'] }}{{ url_for('static', filename='assets/libs/@iconscout/unicons/css/line.css') }}" type="text/css">
+    <link rel="stylesheet" href="{{ config['S3_BUCKET_URL'] }}{{ url_for('static', filename='assets/css/style.min.css') }}" id="color-opt" class="theme-opt" type="text/css">
+
+    <script src="{{ config['S3_BUCKET_URL'] }}{{ url_for('static', filename='assets/libs/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ config['S3_BUCKET_URL'] }}{{ url_for('static', filename='assets/libs/tiny-slider/min/tiny-slider.js') }}"></script>
+    <script src="{{ config['S3_BUCKET_URL'] }}{{ url_for('static', filename='assets/libs/feather-icons/feather.min.js') }}"></script>
+    <script src="{{ config['S3_BUCKET_URL'] }}{{ url_for('static', filename='assets/js/plugins.init.js') }}"></script>
+    <script src="{{ config['S3_BUCKET_URL'] }}{{ url_for('static', filename='assets/js/app.js') }}"></script>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .overlay-content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+        }
+
+
+        video.background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            object-fit: cover;
+            animation: filterAnimation 15s infinite alternate linear;
+            transform-origin: center;
+        }
+        
+        @keyframes filterAnimation {
+            0%, 100% {
+                filter: hue-rotate(0deg) saturate(200%) brightness(1.5) contrast(2) blur(0px);
+            }
+            25% {
+                filter: hue-rotate(90deg) saturate(300%) brightness(1.2) contrast(1.5) blur(2px);
+            }
+            50% {
+                filter: hue-rotate(180deg) saturate(150%) brightness(0.7) contrast(1.2) blur(4px);
+            }
+            75% {
+                filter: hue-rotate(270deg) saturate(250%) brightness(1.3) contrast(1.8) blur(2px);
+            }
+        }
+       
+</style>
+
+
+</head>
+<body>
+    <video class="background" src="{{ config['S3_BUCKET_URL'] }}{{ url_for('static', filename='assets/images/AI-Abstract-Long.mp4') }}" autoplay="true" loop="true" muted="true"></video>
+<section class="overlay-content">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-24">
+
+                <form id="url-form" class="card p-4 shadow rounded" method="post" action="{{ url_for('index') }}">
+                    {{ form.hidden_tag() }} <!-- Dies fügt das CSRF-Token zum Formular hinzu -->
+                    <h4 class="mb-3 text-center">Shorten your URL</h4>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="input-group mb-3">
+                                {{ form.link(class="form-control rounded-left", placeholder="Put your Link here. It will destroy itself after 24 hours, just like in the movies.", required=true, id="url-input") }}
+
+                                <input type="submit" class="btn btn-pills btn-soft-primary" value="Shorten!">
+                            </div>
+                            {% if form.link.errors %}
+                                <ul class="errors">
+                                    {% for error in form.link.errors %}
+                                        <li>{{ error }}</li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="mb-3" id="result">
+                        <!-- Hier wird der verkürzte Link angezeigt -->
+                    </div>
+                </form>
+                
+            </div>
+        </div>
+    </div>
+</section>
+
+
+    <script>
+        /*
+        $('#url-form').submit(function(event) {
+            event.preventDefault();
+            $.ajax({
+                type: "POST",
+                url: "/",
+                data: $(this).serialize(),
+                dataType: "json",
+                success: function(data) {
+                    if (data.error) {
+                        $('#result').html('<div class="alert alert-danger" role="alert">' + data.error + '</div>');
+                    } else {
+                        $('#result').html('<div class="row d-flex justify-content-between"><div class="col-auto">Your shortened URL: <a href="' + data.short_url + '" id="short-url">' + data.short_url + '</a></div><div class="col-auto"><button type="button" id="copy-button" class="btn btn-pills btn-soft-primary text-right" onclick="copyToClipboard()">Copy Link!</button></div></div>');
+                    }
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    $('#result').html('<div class="alert alert-danger" role="alert">URL is invalid. Please use a valid url.</div>');
+                }
+            });
+        });
+        
+
+        function copyToClipboard() {
+            const el = document.createElement('textarea');
+            el.value = document.getElementById('short-url').href;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+        
+            const copyButton = document.getElementById('copy-button');
+            copyButton.classList.remove('btn-soft-primary');
+            copyButton.classList.add('btn-soft-success');
+
+        } */
+
+        $('#url-form').submit(function(event) {
+            event.preventDefault();
+            $.ajax({
+                type: "POST",
+                url: "/",
+                data: $(this).serialize(),
+                dataType: "json",
+                success: function(data) {
+                    if (data.error) {
+                        $('#result').html('<div class="alert alert-danger" role="alert">' + data.error + '</div>');
+                    } else {
+                        let clean_short_url = data.short_url.replace('http://', '').replace('https://', '').replace('www.', '');
+                        $('#result').html('<div class="row d-flex justify-content-between"><div class="col-auto">Your shortened URL: <a href="' + data.short_url + '" target="_blank" id="short-url">' + clean_short_url + '</a></div><div class="col-auto"><button type="button" id="copy-button" class="btn btn-pills btn-soft-primary text-right" onclick="copyToClipboard()">Copy Link!</button></div></div>');
+                    }
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    $('#result').html('<div class="alert alert-danger" role="alert">URL is invalid. Please use a valid url.</div>');
+                }
+            });
+        });
+
+
+        function copyToClipboard() {
+            const el = document.createElement('textarea');
+            let clean_short_url = document.getElementById('short-url').href.replace('http://', '').replace('https://', '').replace('www.', '');
+            el.value = clean_short_url;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+        
+            const copyButton = document.getElementById('copy-button');
+            copyButton.classList.remove('btn-soft-primary');
+            copyButton.classList.add('btn-soft-success');
+        }
+
+
+    </script>
+
+    <!-- Hier beginnt der AdSense-Code -->
+    <!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-client="YOUR_AD_CLIENT_ID"
+         data-ad-slot="YOUR_AD_SLOT_ID"
+         data-ad-format="auto"
+         data-full-width-responsive="true"></ins>
+    <script>
+         (adsbygoogle = window.adsbygoogle || []).push({});
+    </script> -->
+    <!-- Hier endet der AdSense-Code -->
+</body>
+</html>

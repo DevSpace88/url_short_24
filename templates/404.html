@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>URL Shortener</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+    <!-- favicon -->
+    <link rel="shortcut icon" href="{{ config['S3_BUCKET_URL'] }}{{ url_for('static', filename='assets/images/favicon.ico') }}">
+
+    <link rel="stylesheet" href="{{ config['S3_BUCKET_URL'] }}{{ url_for('static', filename='assets/libs/tiny-slider/tiny-slider.css') }}">
+    <link rel="stylesheet" href="{{ config['S3_BUCKET_URL'] }}{{ url_for('static', filename='assets/css/bootstrap.min.css') }}" id="bootstrap-style" class="theme-opt" type="text/css">
+    <link rel="stylesheet" href="{{ config['S3_BUCKET_URL'] }}{{ url_for('static', filename='assets/libs/@mdi/font/css/materialdesignicons.min.css') }}" type="text/css">
+    <link rel="stylesheet" href="{{ config['S3_BUCKET_URL'] }}{{ url_for('static', filename='assets/libs/@iconscout/unicons/css/line.css') }}" type="text/css">
+    <link rel="stylesheet" href="{{ config['S3_BUCKET_URL'] }}{{ url_for('static', filename='assets/css/style.min.css') }}" id="color-opt" class="theme-opt" type="text/css">
+
+    <script src="{{ config['S3_BUCKET_URL'] }}{{ url_for('static', filename='assets/libs/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ config['S3_BUCKET_URL'] }}{{ url_for('static', filename='assets/libs/tiny-slider/min/tiny-slider.js') }}"></script>
+    <script src="{{ config['S3_BUCKET_URL'] }}{{ url_for('static', filename='assets/libs/feather-icons/feather.min.js') }}"></script>
+    <script src="{{ config['S3_BUCKET_URL'] }}{{ url_for('static', filename='assets/js/plugins.init.js') }}"></script>
+    <script src="{{ config['S3_BUCKET_URL'] }}{{ url_for('static', filename='assets/js/app.js') }}"></script>
+    <style>
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .overlay-content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+        }
+
+
+        /*
+        video.background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            object-fit: cover;
+            animation: filterAnimation 100s infinite alternate;
+            transform-origin: center;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        }*/
+
+
+
+        /*
+        @keyframes filterAnimation {
+            0% {
+                filter: hue-rotate(0deg) saturate(100%) blur(0px) rotate(0deg) scale(1);
+            }
+            100% {
+                filter: hue-rotate(360deg) saturate(150%) blur(10px) rotate(-360deg) scale(1.2);
+            }
+        }   */
+
+        /*
+    video.background {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        object-fit: cover;
+        animation: filterAnimation 15s infinite linear;
+        transform-origin: center;
+    }
+    
+    @keyframes filterAnimation {
+        0%, 100% {
+            filter: hue-rotate(0deg) saturate(200%) brightness(1.5) contrast(2);
+        }
+        25% {
+            filter: hue-rotate(90deg) saturate(300%) brightness(1.2) contrast(1.5);
+        }
+        50% {
+            filter: hue-rotate(180deg) saturate(150%) brightness(0.7) contrast(1.2);
+        }
+        75% {
+            filter: hue-rotate(270deg) saturate(250%) brightness(1.3) contrast(1.8);
+        }
+
+        */
+
+
+        video.background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            object-fit: cover;
+            animation: filterAnimation 15s infinite alternate linear;
+            transform-origin: center;
+        }
+
+        @keyframes filterAnimation {
+
+            0%,
+            100% {
+                filter: hue-rotate(0deg) saturate(200%) brightness(1.5) contrast(2) blur(0px);
+            }
+
+            25% {
+                filter: hue-rotate(90deg) saturate(300%) brightness(1.2) contrast(1.5) blur(2px);
+            }
+
+            50% {
+                filter: hue-rotate(180deg) saturate(150%) brightness(0.7) contrast(1.2) blur(4px);
+            }
+
+            75% {
+                filter: hue-rotate(270deg) saturate(250%) brightness(1.3) contrast(1.8) blur(2px);
+            }
+        }
+
+
+        .image-container {
+            position: relative;
+            display: inline-block;
+            /* oder 'block', je nach Bedarf */
+            left: 10%;
+        }
+
+        
+
+        .error-title {
+            position: absolute;
+            top: 30%;  /* Sie können diesen Wert anpassen, um die Position der Überschrift zu ändern */
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 5em;  /* Startgröße */
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            animation: scaleAnimation 3s infinite alternate, colorAnimation 15s infinite alternate linear;
+        }
+        
+        @keyframes scaleAnimation {
+            0%, 100% {
+                transform: translate(-50%, -50%) scale(1);
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.5);
+            }
+        }
+        
+
+        @keyframes colorAnimation {
+            0%, 100% {
+                color: rgb(177, 43, 43);
+            }
+        
+            25% {
+                color: rgb(43, 177, 43);
+            }
+        
+            50% {
+                color: rgb(43, 43, 177);
+            }
+        
+            75% {
+                color: rgb(177, 177, 43);
+            }
+        }
+
+
+        .image-effect {
+            animation: scaleAnimation 3s infinite alternate, imageFilterAnimation 15s infinite alternate linear;
+        }
+        
+        @keyframes imageFilterAnimation {
+            0%, 100% {
+                filter: hue-rotate(0deg) saturate(100%) brightness(1);
+            }
+            25% {
+                filter: hue-rotate(90deg) saturate(150%) brightness(1.1);
+            }
+            50% {
+                filter: hue-rotate(180deg) saturate(100%) brightness(0.9);
+            }
+            75% {
+                filter: hue-rotate(270deg) saturate(150%) brightness(1.1);
+            }
+        }
+
+        .button-container {
+            position: absolute;
+            bottom: 10%;  /* Adjust this value to move the button up or down */
+            left: 50%;
+            transform: translateX(-50%);
+        }
+    
+        .btn {
+            background-color: #fff;  /* Default Bootstrap primary color */
+            border-color: #fff;
+            color: #0056b3;
+            box-shadow: black;
+        }
+    
+        .btn:hover {
+            background-color: #ffffffce;  /* Darker shade for hover effect */
+            border-color: #ffffffce;
+        }
+    
+        .btn a {
+            color: #0056b3;
+            text-decoration: none;
+        }
+
+        
+    </style>
+
+    <video class="background" src="{{ config['S3_BUCKET_URL'] }}{{ url_for('static', filename='assets/images/AI-Abstract-Long.mp4') }}" autoplay="true" loop="true" muted="true"></video>
+    <section class="overlay-content">
+        <div class="image-container">
+            <h1 class="error-title">404 Error</h1>
+            <img class="image-effect" src="{{ config['S3_BUCKET_URL'] }}{{ url_for('static', filename='assets/images/404.png') }}" />
+           
+        </div>
+        
+        
+        <div class="button-container">
+            <button class="btn btn-pills"><a href="/">Go back!</a></button>
+        </div>
+
+
+    </section>
+    </body>
+
+</html>

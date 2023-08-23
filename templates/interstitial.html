@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Getting redirected...</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+        
+    <!-- favicon -->
+    <link rel="shortcut icon" href="{{ config['S3_BUCKET_URL'] }}{{ url_for('static', filename='assets/images/favicon.ico') }}">
+
+    <link rel="stylesheet" href="{{ config['S3_BUCKET_URL'] }}{{ url_for('static', filename='assets/libs/tiny-slider/tiny-slider.css') }}">
+    <link rel="stylesheet" href="{{ config['S3_BUCKET_URL'] }}{{ url_for('static', filename='assets/css/bootstrap.min.css') }}" id="bootstrap-style" class="theme-opt"  type="text/css">
+    <link rel="stylesheet" href="{{ config['S3_BUCKET_URL'] }}{{ url_for('static', filename='assets/libs/@mdi/font/css/materialdesignicons.min.css') }}" type="text/css">
+    <link rel="stylesheet" href="{{ config['S3_BUCKET_URL'] }}{{ url_for('static', filename='assets/libs/@iconscout/unicons/css/line.css') }}" type="text/css">
+    <link rel="stylesheet" href="{{ config['S3_BUCKET_URL'] }}{{ url_for('static', filename='assets/css/style.min.css') }}" id="color-opt" class="theme-opt" type="text/css">
+
+    <script src="{{ config['S3_BUCKET_URL'] }}{{ url_for('static', filename='assets/libs/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ config['S3_BUCKET_URL'] }}{{ url_for('static', filename='assets/libs/tiny-slider/min/tiny-slider.js') }}"></script>
+    <script src="{{ config['S3_BUCKET_URL'] }}{{ url_for('static', filename='assets/libs/feather-icons/feather.min.js') }}"></script>
+    <script src="{{ config['S3_BUCKET_URL'] }}{{ url_for('static', filename='assets/js/plugins.init.js') }}"></script>
+    <script src="{{ config['S3_BUCKET_URL'] }}{{ url_for('static', filename='assets/js/app.js') }}"></script>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+        }
+        
+        .background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            object-fit: cover;
+        }
+        
+        .overlay-content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+        }
+    </style>
+
+
+</head>
+<body>
+    <video class="background" src="{{ config['S3_BUCKET_URL'] }}{{ url_for('static', filename='assets/images/AI-Abstract-Long.mp4') }}" autoplay="true" loop="true" muted="true"></video>
+<section class="overlay-content">
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-24">
+                <div class="card p-4 shadow rounded">
+                    <h4 class="mb-3 text-center">Redirecting in <span id="countdown">5</span> Seconds...</h4>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="input-group mb-3">
+                                <!-- Ihre Werbung hier -->
+                                <div id="ad-container">
+                                    <p>Werbung...</p>
+                                </div>                               
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+    <script>
+        let countdown = 5;
+        const countdownElement = document.getElementById('countdown');
+
+        const interval = setInterval(() => {
+            countdown -= 1;
+            countdownElement.textContent = countdown;
+
+            if (countdown <= 0) {
+                clearInterval(interval);
+                window.location.href = "{{ target_url }}";
+            }
+        }, 1000);
+    </script>
+</body>
+</html>
